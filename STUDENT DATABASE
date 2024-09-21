@@ -1,0 +1,151 @@
+The database will consist of three main tables:
+
+Students: Contains personal information about each student.
+Courses: Stores details about each course.
+Enrollments: Tracks which students are enrolled in which courses, along with the grades they received.
+
+Students Table
+  CREATE TABLE Students (
+    student_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    phone VARCHAR(15),
+    date_of_birth DATE,
+    address TEXT
+  );
+Courses Table
+  CREATE TABLE Courses (
+    course_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_name VARCHAR(100),
+    course_code VARCHAR(10),
+    credits INT
+);
+Enrollments Table
+  CREATE TABLE Enrollments (
+    enrollment_id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT,
+    course_id INT,
+    grade VARCHAR(2),
+    semester VARCHAR(20),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+);
+  Insert courses into the Courses table:
+
+sql
+
+INSERT INTO Courses (course_name, course_code, credits)
+VALUES 
+('Introduction to Computer Science', 'CS101', 4),
+('Database Systems', 'CS102', 3),
+('Algorithms and Data Structures', 'CS103', 3);
+Insert enrollments into the Enrollments table:
+
+sql
+
+INSERT INTO Enrollments (student_id, course_id, grade, semester)
+VALUES 
+(1, 1, 'A', 'Fall 2023'),
+(1, 2, 'B', 'Spring 2024'),
+(2, 1, 'B', 'Fall 2023'),
+(2, 3, 'A', 'Spring 2024'),
+(3, 2, 'A', 'Fall 2023');
+Step 3: Writing SQL Queries
+1. View all student details:
+go
+
+```sql
+SELECT * FROM Students;
+```
+2. View all course details:
+go
+
+```sql
+SELECT * FROM Courses;
+```
+3. View all enrollments:
+go
+
+```sql
+SELECT * FROM Enrollments;
+```
+4. Find all students enrolled in a specific course (e.g., 'CS101'):
+vbnet
+
+```sql
+SELECT Students.first_name, Students.last_name, Courses.course_name
+FROM Enrollments
+JOIN Students ON Enrollments.student_id = Students.student_id
+JOIN Courses ON Enrollments.course_id = Courses.course_id
+WHERE Courses.course_code = 'CS101';
+```
+5. Find the grades of a student (e.g., 'John Doe') in all courses:
+sql
+
+```sql
+SELECT Courses.course_name, Enrollments.grade
+FROM Enrollments
+JOIN Courses ON Enrollments.course_id = Courses.course_id
+JOIN Students ON Enrollments.student_id = Students.student_id
+WHERE Students.first_name = 'John' AND Students.last_name = 'Doe';
+```
+6. Calculate the average grade for a specific course (e.g., 'CS102'):
+sql
+
+```sql
+SELECT AVG(CASE 
+             WHEN grade = 'A' THEN 4
+             WHEN grade = 'B' THEN 3
+             WHEN grade = 'C' THEN 2
+             WHEN grade = 'D' THEN 1
+             ELSE 0
+           END) AS average_gpa
+FROM Enrollments
+JOIN Courses ON Enrollments.course_id = Courses.course_id
+WHERE Courses.course_code = 'CS102';
+```
+7. List all students along with the courses they are enrolled in and their grades:
+vbnet
+
+```sql
+SELECT Students.first_name, Students.last_name, Courses.course_name, Enrollments.grade
+FROM Enrollments
+JOIN Students ON Enrollments.student_id = Students.student_id
+JOIN Courses ON Enrollments.course_id = Courses.course_id;
+```
+Step 4: Advanced Queries with Joins
+1. Find students who have enrolled in more than one course:
+sql
+
+```sql
+SELECT Students.student_id, Students.first_name, Students.last_name, COUNT(Enrollments.course_id) AS course_count
+FROM Enrollments
+JOIN Students ON Enrollments.student_id = Students.student_id
+GROUP BY Students.student_id
+HAVING course_count > 1;
+```
+2. Find students who have enrolled in a specific semester (e.g., 'Fall 2023'):
+sql
+
+```sql
+SELECT Students.first_name, Students.last_name, Enrollments.semester
+FROM Enrollments
+JOIN Students ON Enrollments.student_id = Students.student_id
+WHERE Enrollments.semester = 'Fall 2023';
+```
+Step 5: Updating and Deleting Records
+1. Update a student's grade for a course:
+sql
+
+
+UPDATE Enrollments
+SET grade = 'A'
+WHERE student_id = 1 AND course_id = 2;
+```
+2. Delete a student record:
+sql
+
+```sql
+DELETE FROM Students
+WHERE student_id = 3;
