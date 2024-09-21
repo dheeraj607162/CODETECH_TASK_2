@@ -1,9 +1,3 @@
-The database will consist of three main tables:
-
-Students: Contains personal information about each student.
-Courses: Stores details about each course.
-Enrollments: Tracks which students are enrolled in which courses, along with the grades they received.
-
 Students Table
   CREATE TABLE Students (
     student_id INT PRIMARY KEY AUTO_INCREMENT,
